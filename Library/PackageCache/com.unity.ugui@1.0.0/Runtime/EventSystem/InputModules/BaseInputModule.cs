@@ -199,6 +199,7 @@ namespace UnityEngine.EventSystems
                 var hoveredCount = currentPointerData.hovered.Count;
                 for (var i = 0; i < hoveredCount; ++i)
                 {
+                    currentPointerData.fullyExited = true;
                     ExecuteEvents.Execute(currentPointerData.hovered[i], currentPointerData, ExecuteEvents.pointerMoveHandler);
                     ExecuteEvents.Execute(currentPointerData.hovered[i], currentPointerData, ExecuteEvents.pointerExitHandler);
                 }
@@ -235,6 +236,12 @@ namespace UnityEngine.EventSystems
 
                 while (t != null)
                 {
+                    if (t.gameObject == newEnterTarget && t.gameObject == commonRoot)
+                    {
+                        break;
+                    }
+
+                    currentPointerData.fullyExited = t.gameObject != commonRoot && currentPointerData.pointerEnter != newEnterTarget;
                     ExecuteEvents.Execute(t.gameObject, currentPointerData, ExecuteEvents.pointerMoveHandler);
                     ExecuteEvents.Execute(t.gameObject, currentPointerData, ExecuteEvents.pointerExitHandler);
                     currentPointerData.hovered.Remove(t.gameObject);
@@ -254,6 +261,11 @@ namespace UnityEngine.EventSystems
 
                 while (t != null)
                 {
+                    if (t.gameObject != newEnterTarget && t.gameObject == commonRoot)
+                    {
+                        break;
+                    }
+                    currentPointerData.reentered = t.gameObject == commonRoot;
                     ExecuteEvents.Execute(t.gameObject, currentPointerData, ExecuteEvents.pointerEnterHandler);
                     ExecuteEvents.Execute(t.gameObject, currentPointerData, ExecuteEvents.pointerMoveHandler);
                     currentPointerData.hovered.Add(t.gameObject);
